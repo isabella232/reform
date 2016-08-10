@@ -18,6 +18,8 @@ func fileGoType(x ast.Expr) string {
 		return "*" + fileGoType(t.X)
 	case *ast.Ident:
 		return t.String()
+	case *ast.SelectorExpr:
+		return fileGoType(t.X) + "." + t.Sel.String()
 	default:
 		panic(fmt.Sprintf("reform: fileGoType: unhandled '%s' (%#v). Please report this bug.", x, x))
 	}

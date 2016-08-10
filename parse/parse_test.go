@@ -73,7 +73,8 @@ var (
 		Type:    "Extra",
 		SQLName: "extra",
 		Fields: []FieldInfo{
-			{Name: "ID", PKType: "Integer", Column: "id"},
+			{Name: "ID", PKType: "uuid.UUID", Column: "id"},
+			{Name: "Int", Column: "int"},
 			{Name: "Name", Column: "name"},
 			{Name: "Bytes", Column: "bytes"},
 			{Name: "Bytes2", Column: "bytes2"},

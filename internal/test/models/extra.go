@@ -1,5 +1,9 @@
 package models
 
+import (
+	"github.com/satori/go.uuid"
+)
+
 //go:generate reform
 
 // types for testing
@@ -11,7 +15,8 @@ type (
 
 //reform:extra
 type Extra struct {
-	ID     Integer   `reform:"id,pk"`
+	ID     uuid.UUID `reform:"id,pk"`
+	Int    Integer   `reform:"int"`
 	Name   *String   `reform:"name"`
 	Bytes  []byte    `reform:"bytes"`
 	Bytes2 Bytes     `reform:"bytes2"`
