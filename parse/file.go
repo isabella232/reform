@@ -18,8 +18,12 @@ func fileGoType(x ast.Expr) string {
 		return "*" + fileGoType(t.X)
 	case *ast.Ident:
 		return t.String()
+	case *ast.SelectorExpr:
+		return t.Sel.Name
+	case *ast.ArrayType:
+		panic(fmt.Sprintf("reform: fileGoType: You cannot store slice directly. You have to wrap it into type.", x, x, t))
 	default:
-		panic(fmt.Sprintf("reform: fileGoType: unhandled '%s' (%#v). Please report this bug.", x, x))
+		panic(fmt.Sprintf("reform: fileGoType: unhandled '%s' (%#v). Please report this bug. == %s", x, x, t))
 	}
 }
 
@@ -59,7 +63,7 @@ func parseStructTypeSpec(ts *ast.TypeSpec, str *ast.StructType) (*StructInfo, er
 		}
 
 		// parse tag and type
-		column, isPK := parseStructFieldTag(tag)
+		column, isPK, toJSON := parseStructFieldTag(tag)
 		if column == "" {
 			return nil, fmt.Errorf(`reform: %s has field %s with invalid "reform:" tag value, it is not allowed`, res.Type, name.Name)
 		}
@@ -77,7 +81,9 @@ func parseStructTypeSpec(ts *ast.TypeSpec, str *ast.StructType) (*StructInfo, er
 		res.Fields = append(res.Fields, FieldInfo{
 			Name:   name.Name,
 			PKType: pkType,
+			Type:   fileGoType(f.Type),
 			Column: column,
+			ToJSON: toJSON,
 		})
 		if isPK {
 			res.PKFieldIndex = n

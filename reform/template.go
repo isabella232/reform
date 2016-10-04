@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"text/template"
 
 	"github.com/optiopay/reform/parse"
@@ -14,10 +15,15 @@ type StructData struct {
 }
 
 var (
+	funcMap = template.FuncMap{
+		"trim": strings.TrimLeft,
+	}
 	prologTemplate = template.Must(template.New("prolog").Parse(`
 // generated with github.com/optiopay/reform
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -26,7 +32,7 @@ import (
 )
 `))
 
-	structTemplate = template.Must(template.New("struct").Parse(`
+	structTemplate = template.Must(template.New("struct").Funcs(funcMap).Parse(`
 type {{ .TableType }} struct {
 	s parse.StructInfo
 	z []interface{}
@@ -102,6 +108,7 @@ func (s *{{ .Type }}) View() reform.View {
 	return {{ .TableVar }}
 }
 
+
 {{- if .IsTable }}
 
 // Table returns Table object for that record.
@@ -136,6 +143,23 @@ func (s *{{ .Type }}) SetPK(pk interface{}) {
 }
 
 {{- end }}
+
+{{- range $i, $f := .Fields }}
+	{{- if $f.ToJSON }}
+
+	func (t {{ $f.Type }}) Value() (driver.Value, error) {
+		return json.Marshal(t)
+	}
+
+	func (t *{{ trim $f.Type "*"}}) Scan(src interface{}) error {
+		//fmt.Printf("src = %+v\n", src)
+		s := src.(string)
+		return json.Unmarshal([]byte(s), t)
+	}
+
+	{{- end }}
+{{- end }}
+
 
 // check interfaces
 var (

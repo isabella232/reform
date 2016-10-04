@@ -64,7 +64,7 @@ func Object(obj interface{}, schema, table string) (res *StructInfo, err error) 
 		}
 
 		// parse tag and type
-		column, isPK := parseStructFieldTag(tag)
+		column, isPK, toJSON := parseStructFieldTag(tag)
 		if column == "" {
 			return nil, fmt.Errorf(`reform: %s has field %s with invalid "reform:" tag value, it is not allowed`, res.Type, f.Name)
 		}
@@ -79,10 +79,25 @@ func Object(obj interface{}, schema, table string) (res *StructInfo, err error) 
 			}
 		}
 
+		//fieldType := objectGoType(f.Type, t)
+
+		fieldType := f.Type.String()
+		if strings.Contains(fieldType, ".") {
+			splits := strings.Split(fieldType, ".")
+			stripped := splits[len(splits)-1]
+			if strings.HasPrefix(fieldType, "*") {
+				fieldType = "*" + stripped
+			} else {
+				fieldType = stripped
+			}
+		}
+
 		res.Fields = append(res.Fields, FieldInfo{
 			Name:   f.Name,
 			PKType: pkType,
+			Type:   fieldType,
 			Column: column,
+			ToJSON: toJSON,
 		})
 		if isPK {
 			res.PKFieldIndex = n

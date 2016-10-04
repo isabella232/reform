@@ -15,7 +15,9 @@ import (
 type FieldInfo struct {
 	Name   string // field name as defined in source file, e.g. Name
 	PKType string // primary key field type as defined in source file, e.g. string
+	Type   string
 	Column string // SQL database column name from "reform:" struct field tag, e.g. name
+	ToJSON bool
 }
 
 // StructInfo represents information about struct.
@@ -67,7 +69,7 @@ func AssertUpToDate(si *StructInfo, obj interface{}) {
 }
 
 // parseStructFieldTag is used by both file and runtime parsers
-func parseStructFieldTag(tag string) (sqlName string, isPK bool) {
+func parseStructFieldTag(tag string) (sqlName string, isPK bool, toJSON bool) {
 	parts := strings.Split(tag, ",")
 	if len(parts) == 0 || len(parts) > 2 {
 		return
@@ -77,6 +79,8 @@ func parseStructFieldTag(tag string) (sqlName string, isPK bool) {
 		switch parts[1] {
 		case "pk":
 			isPK = true
+		case "json":
+			toJSON = true
 		default:
 			return
 		}
