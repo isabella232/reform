@@ -3,7 +3,7 @@ package main
 import (
 	"text/template"
 
-	"gopkg.in/reform.v1/parse"
+	"github.com/optiopay/reform/parse"
 )
 
 // StructData represents struct info for XXX_reform.go file generation.
@@ -15,14 +15,14 @@ type StructData struct {
 
 var (
 	prologTemplate = template.Must(template.New("prolog").Parse(`
-// generated with gopkg.in/reform.v1
+// generated with github.com/optiopay/reform
 
 import (
 	"fmt"
 	"strings"
 
-	"gopkg.in/reform.v1"
-	"gopkg.in/reform.v1/parse"
+	"github.com/optiopay/reform"
+	"github.com/optiopay/reform/parse"
 )
 `))
 

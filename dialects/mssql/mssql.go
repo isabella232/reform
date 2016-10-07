@@ -1,7 +1,7 @@
 // Package mssql implements reform.Dialect for Microsoft SQL Server.
-package mssql // import "gopkg.in/reform.v1/dialects/mssql"
+package mssql // import "github.com/optiopay/reform/dialects/mssql"
 
-import "gopkg.in/reform.v1"
+import "github.com/optiopay/reform"
 
 type mssql struct{}
 
