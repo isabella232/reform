@@ -81,14 +81,18 @@ func Object(obj interface{}, schema, table string) (res *StructInfo, err error) 
 
 		//fieldType := objectGoType(f.Type, t)
 
-		fieldType := f.Type.String()
-		if strings.Contains(fieldType, ".") {
-			splits := strings.Split(fieldType, ".")
-			stripped := splits[len(splits)-1]
-			if strings.HasPrefix(fieldType, "*") {
-				fieldType = "*" + stripped
-			} else {
-				fieldType = stripped
+		var fieldType string
+
+		if toJSON {
+			fieldType = f.Type.String()
+			if strings.Contains(fieldType, ".") {
+				splits := strings.Split(fieldType, ".")
+				stripped := splits[len(splits)-1]
+				if strings.HasPrefix(fieldType, "*") {
+					fieldType = "*" + stripped
+				} else {
+					fieldType = stripped
+				}
 			}
 		}
 

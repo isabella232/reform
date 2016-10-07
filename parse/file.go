@@ -78,10 +78,16 @@ func parseStructTypeSpec(ts *ast.TypeSpec, str *ast.StructType) (*StructInfo, er
 			}
 		}
 
+		var fieldType string
+
+		if toJSON {
+			fieldType = fileGoType(f.Type)
+		}
+
 		res.Fields = append(res.Fields, FieldInfo{
 			Name:   name.Name,
 			PKType: pkType,
-			Type:   fileGoType(f.Type),
+			Type:   fieldType,
 			Column: column,
 			ToJSON: toJSON,
 		})
