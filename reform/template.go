@@ -157,8 +157,14 @@ func (s *{{ .Type }}) SetPK(pk interface{}) {
 
 	func (t *{{ trim $f.Type "*"}}) Scan(src interface{}) error {
 		//fmt.Printf("src = %+v\n", src)
-		s := src.(string)
-		return json.Unmarshal([]byte(s), t)
+		switch s := src.(type) {
+		case []byte:
+			return json.Unmarshal(s, t)
+		case string:
+			return json.Unmarshal([]byte(s), t)
+		default:
+			panic("not supported type")
+		}
 	}
 
 	{{- end }}
