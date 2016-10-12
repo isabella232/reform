@@ -30,6 +30,10 @@ import (
 	"github.com/optiopay/reform"
 	"github.com/optiopay/reform/parse"
 )
+
+var _ driver.Null
+var _ json.Decoder
+
 `))
 
 	structTemplate = template.Must(template.New("struct").Funcs(funcMap).Parse(`
