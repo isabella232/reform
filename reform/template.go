@@ -163,7 +163,7 @@ func (s *{{ .Type }}) SetPK(pk interface{}) {
 		case string:
 			return json.Unmarshal([]byte(s), t)
 		default:
-			panic("not supported type")
+			return fmt.Errorf("not supported type: %#+v", t)
 		}
 	}
 
