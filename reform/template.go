@@ -14,9 +14,14 @@ type StructData struct {
 	TableVar  string
 }
 
+func isRef(val string) bool {
+	return val[0] == '*'
+}
+
 var (
 	funcMap = template.FuncMap{
-		"trim": strings.TrimLeft,
+		"trim":  strings.TrimLeft,
+		"isRef": isRef,
 	}
 	prologTemplate = template.Must(template.New("prolog").Parse(`
 // generated with github.com/optiopay/reform
@@ -152,6 +157,11 @@ func (s *{{ .Type }}) SetPK(pk interface{}) {
 	{{- if $f.ToJSON }}
 
 	func (t {{ $f.Type }}) Value() (driver.Value, error) {
+	{{- if isRef $f.Type }}
+		if t == nil {
+			return nil, nil
+		}
+	{{- end }}
 		return json.Marshal(t)
 	}
 
